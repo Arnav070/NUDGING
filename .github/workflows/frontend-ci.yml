@@ -30,11 +30,4 @@ jobs:
     - name: Build frontend
       run: npm run build
       working-directory: ./frontend
-- name: Deploy to Netlify
-  uses: nwtgck/actions-netlify@v1.1
-  with:
-    publish-dir: ./frontend/build
-    production-deploy: true
-  env:
-    NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-    NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
