@@ -25,7 +25,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    # Skipping installation of dependencies since we are not using package.json or package-lock.json
+    # Install necessary dependencies manually
+    - name: Install react-scripts
+      run: npm install react-scripts
 
     - name: Lint Backend
       working-directory: ./nudge-engine-backend
@@ -37,7 +39,9 @@ jobs:
 
     - name: Build frontend
       working-directory: ./nudge-engine-frontend
-      run: npm run build --if-present
+      run: |
+        chmod +x node_modules/.bin/react-scripts
+        npm run build --if-present
 
     - name: Deploy backend
       working-directory: ./nudge-engine-backend
