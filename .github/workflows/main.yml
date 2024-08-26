@@ -1,5 +1,4 @@
 name: CI/CD Pipeline
-
 on:
   push:
     branches:
@@ -7,32 +6,27 @@ on:
   pull_request:
     branches:
       - master
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [20.x]  # Use Node.js 20.x
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-
     - name: Set execute permissions for nodemon
       working-directory: ./nudge-engine-backend
       run: chmod +x ./node_modules/.bin/nodemon
-
     - name: Start Backend
       working-directory: ./nudge-engine-backend
-      run: npm start
-
+      run: npm start &
+    - name: Wait for Backend to start
+      run: sleep 10
     - name: Start Frontend
       working-directory: ./nudge-engine-frontend
       run: npm start
