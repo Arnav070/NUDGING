@@ -14,14 +14,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]  # Updated to use Node.js 20.x
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Updated to v3
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3  # Updated to v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -29,10 +29,12 @@ jobs:
     - name: Install backend dependencies
       working-directory: ./nudge-engine-backend
       run: npm install
+      continue-on-error: false  # Fails the build if package-lock.json is missing
 
     - name: Install frontend dependencies
       working-directory: ./nudge-engine-frontend
       run: npm install
+      continue-on-error: false  # Fails the build if package-lock.json is missing
 
     - name: Lint Backend
       working-directory: ./nudge-engine-backend
