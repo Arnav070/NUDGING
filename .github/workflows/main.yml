@@ -1,0 +1,69 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install backend dependencies
+      working-directory: ./nudge-engine-backend
+      run: npm install
+      continue-on-error: false
+
+    - name: Install frontend dependencies
+      working-directory: ./nudge-engine-frontend
+      run: npm install
+      continue-on-error: false
+
+    - name: Lint Backend
+      working-directory: ./nudge-engine-backend
+      run: npm run lint
+
+    - name: Lint Frontend
+      working-directory: ./nudge-engine-frontend
+      run: npm run lint
+
+    - name: Run backend tests
+      working-directory: ./nudge-engine-backend
+      run: npm test
+
+    - name: Run frontend tests
+      working-directory: ./nudge-engine-frontend
+      run: npm test
+
+    - name: Build frontend
+      working-directory: ./nudge-engine-frontend
+      run: npm run build
+
+    - name: Deploy backend
+      working-directory: ./nudge-engine-backend
+      run: |
+        npm run build
+        npm start
+    - name: Deploy frontend
+      working-directory: ./nudge-engine-frontend
+      run: |
+        npm run build
+        npm install -g serve
+        serve -s build
