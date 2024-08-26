@@ -35,20 +35,28 @@ jobs:
       working-directory: ./nudge-engine-frontend
       run: npm run lint --if-present
 
-    - name: Run backend tests (skipping if not defined)
+    - name: Run backend tests (skipping if no actual tests are defined)
       working-directory: ./nudge-engine-backend
       run: |
         if [ -f package.json ] && grep -q '"test":' package.json; then
-          npm test
+          if ! grep -q 'echo "Error: no test specified" && exit 1' package.json; then
+            npm test
+          else
+            echo "No actual tests defined, skipping..."
+          fi
         else
           echo "No tests defined, skipping..."
         fi
 
-    - name: Run frontend tests (skipping if not defined)
+    - name: Run frontend tests (skipping if no actual tests are defined)
       working-directory: ./nudge-engine-frontend
       run: |
         if [ -f package.json ] && grep -q '"test":' package.json; then
-          npm test
+          if ! grep -q 'echo "Error: no test specified" && exit 1' package.json; then
+            npm test
+          else
+            echo "No actual tests defined, skipping..."
+          fi
         else
           echo "No tests defined, skipping..."
         fi
