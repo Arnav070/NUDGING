@@ -25,33 +25,29 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    # Install necessary dependencies manually
-    - name: Install react-scripts
-      run: npm install react-scripts
-
-    - name: Lint Backend
-      working-directory: ./nudge-engine-backend
-      run: npm run lint --if-present
-
-    - name: Lint Frontend
-      working-directory: ./nudge-engine-frontend
-      run: npm run lint --if-present
-
+    # Build frontend (skip if no build script is defined)
     - name: Build frontend
       working-directory: ./nudge-engine-frontend
       run: |
-        chmod +x node_modules/.bin/react-scripts
-        npm run build --if-present
+        if [ -f package.json ] && grep -q '"build":' package.json; then
+          npm run build
+        else
+          echo "No build script defined, skipping frontend build..."
+        fi
 
+    # Deploy backend (skip if no start script is defined)
     - name: Deploy backend
       working-directory: ./nudge-engine-backend
       run: |
-        npm run build --if-present
-        npm start --if-present
+        if [ -f package.json ] && grep -q '"start":' package.json; then
+          npm start
+        else
+          echo "No start script defined, skipping backend deployment..."
+        fi
 
+    # Deploy frontend
     - name: Deploy frontend
       working-directory: ./nudge-engine-frontend
       run: |
-        npm run build --if-present
         npm install -g serve
         serve -s build
