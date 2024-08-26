@@ -25,29 +25,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    # Build frontend (skip if no build script is defined)
-    - name: Build frontend
-      working-directory: ./nudge-engine-frontend
-      run: |
-        if [ -f package.json ] && grep -q '"build":' package.json; then
-          npm run build
-        else
-          echo "No build script defined, skipping frontend build..."
-        fi
-
-    # Deploy backend (skip if no start script is defined)
-    - name: Deploy backend
+    - name: Start Backend
       working-directory: ./nudge-engine-backend
-      run: |
-        if [ -f package.json ] && grep -q '"start":' package.json; then
-          npm start
-        else
-          echo "No start script defined, skipping backend deployment..."
-        fi
+      run: npm start
 
-    # Deploy frontend
-    - name: Deploy frontend
+    - name: Start Frontend
       working-directory: ./nudge-engine-frontend
-      run: |
-        npm install -g serve
-        serve -s build
+      run: npm start
